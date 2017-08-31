@@ -3,6 +3,7 @@
 import requests
 import json
 import settings
+from termcolor import cprint
 
 header_info = {
     "User-Agent": settings.USER_AGENT,
@@ -27,7 +28,7 @@ def retrieve_classtable():
     data = {
         'type': 'xs0101',
         'isview': '0',
-        'xnxq01id': settings.GLOBAL_semester,
+        'xnxq01id': settings.GLOBAL_SEMESTER,
         'xs0101id': 'xs0101id',
         'xs': u'xs',
         'sfFD': '1'
@@ -46,7 +47,7 @@ def retrieve_classtable():
         count = count + 1
         if count % 100 == 0:
             print('Finished %s' % count)
-
+    cprint('Finished.',color='green')
 
 if __name__ == '__main__':
     retrieve_classtable()

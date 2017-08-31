@@ -25,6 +25,7 @@ This is the data collecting part of EveryClass. We decided to separate its diffe
 - 手动通过浏览器操作进入教务的课表查询页面，然后抓包获得 cookies，修改`settings.py`里的`COOKIE_JW`字段（因为教务系统有非常严格的 session 机制，在每次运行 retrieve.py 前请务必先确认你此时通过浏览器能正常访问课表查询界面，然后将 cookies 填入`settings.py`）
 - 马上运行`retrieve.py`，它将会按照`stu_data.json`里的列表从教务系统爬取课表存放在`data_collector/raw_data`文件夹里，这大概需要耗费10小时的时间
 - 运行`process_data.py`，程序将会通过 Python 的 Beautiful Soup 4 库分析`raw_data`文件夹里的 HTML 页面，并将课程和学生信息写入数据库
+- 运行`import_available_semesters.py`，将每个学生的可用学期导入数据库
 
 #### 英语大班课单独导入
 - 英语大班课没有录入教务系统，因此单独运行`english_class.py`，程序会获取大班课信息然后保存到数据库

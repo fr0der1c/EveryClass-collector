@@ -160,6 +160,6 @@ def retrieve_english_classes(xq):
 if __name__ == '__main__':
     semester = input('Input a semester(2016-2017-2 by default):')
     if not semester:
-        semester = settings.GLOBAL_semester
+        semester = settings.GLOBAL_SEMESTER
     retrieve_english_classes(semester)
     process_english_students(semester)

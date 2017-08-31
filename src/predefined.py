@@ -33,7 +33,7 @@ def get_row_code(row_num):
 def get_semester_code_for_db(xq):
     if xq == '':
         import settings
-        return get_semester_code_for_db(settings.GLOBAL_semester)
+        return get_semester_code_for_db(settings.GLOBAL_SEMESTER)
     else:
         import re
         splited = re.split('-', xq)

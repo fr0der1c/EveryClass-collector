@@ -1,7 +1,7 @@
 # This file contains global settings of data_collector
 # Created Apr. 19, 2017 by Frederic
-GLOBAL_semester = "2017-2018-1"
-DEBUG = True
+GLOBAL_SEMESTER = "2017-2018-1"
+DEBUG = False
 
 # MySQL Config
 MYSQL_CONFIG = {
