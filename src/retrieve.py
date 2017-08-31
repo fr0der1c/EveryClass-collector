@@ -33,15 +33,19 @@ def retrieve_classtable():
         'sfFD': '1'
     }
     s = requests.session()
+    count = 0
     for i in stu_data:
         data['xs0101id'] = i['xs0101id']
         data['xs'] = i['xm']
         print('Trying to fetch data for %s...' % data['xs0101id'])
         req1 = s.post(url, headers=header_info, data=data)
-        local_filename = 'raw_new/' + data['xs0101id'] + '.html'
+        local_filename = 'raw_data/' + data['xs0101id'] + '.html'
         with open(local_filename, 'wb') as f:
             f.write(req1.content)
         print(req1)
+        count = count + 1
+        if count % 100 == 0:
+            print('Finished %s' % count)
 
 
 if __name__ == '__main__':

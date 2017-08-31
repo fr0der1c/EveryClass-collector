@@ -19,7 +19,7 @@ This is the data collecting part of EveryClass. We decided to separate its diffe
 ```
 
 #### 学生信息采集
-- 通过各种手段取得包含学生基本信息的`stu_data.json`，保存在`data_collector`目录下（格式参见stu_data_sample.json，出于对本校学生信息的保护，恕不直接提供stu_data.json文件）
+- 通过各种手段取得包含学生基本信息的`stu_data.json`，保存在根目录下（格式参见stu_data_sample.json，出于对本校学生信息的保护，恕不直接提供stu_data.json文件）
 
 #### 教务数据获取和处理
 - 手动通过浏览器操作进入教务的课表查询页面，然后抓包获得 cookies，修改`settings.py`里的`COOKIE_JW`字段（因为教务系统有非常严格的 session 机制，在每次运行 retrieve.py 前请务必先确认你此时通过浏览器能正常访问课表查询界面，然后将 cookies 填入`settings.py`）
@@ -29,3 +29,6 @@ This is the data collecting part of EveryClass. We decided to separate its diffe
 #### 英语大班课单独导入
 - 英语大班课没有录入教务系统，因此单独运行`english_class.py`，程序会获取大班课信息然后保存到数据库
 - 如果无法获取数据请先抓包获得 cookies 然后填入`settings.py`的`COOKIE_ENG`字段
+
+### 参与改进
+fork 本项目，然后 pull request。

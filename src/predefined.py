@@ -108,7 +108,7 @@ def print_formatted_info(info, show_debug_tip=False, info_about="DEBUG"):
 # Used to create tables for a semester
 def create_tables():
     import mysql.connector
-    import settings
+    from . import settings
     conn = mysql.connector.connect(**settings.MYSQL_CONFIG)
     cursor = conn.cursor()
     try:
