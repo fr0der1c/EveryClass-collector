@@ -4,7 +4,7 @@ import settings
 from termcolor import cprint
 
 names_json = open("stu_data.json")
-semester = "17-18-1"
+semester = "2017-2018-1"
 names = json.load(names_json)
 conn = mysql.connector.connect(**settings.MYSQL_CONFIG)
 '''
@@ -22,8 +22,8 @@ for each_student in names:
     if not fetch_result:
         # New student
         semesters = [semester]
-        query = "INSERT INTO ec_available_semesters (xh,semesters) VALUES (%s, %s) "
-        cursor.execute(query, (each_student['xh'], json.dumps(semesters)))
+        query = "INSERT INTO ec_available_semesters (xh,semesters,xs0101id,name) VALUES (%s, %s, %s, %s) "
+        cursor.execute(query, (each_student['xh'], json.dumps(semesters), each_student['xs0101id'], each_student['xm']))
     else:
         # old student
         if DEBUG:
@@ -33,7 +33,7 @@ for each_student in names:
             # 当前学期不在数据库中则加入(不判断的话可能重复加入)
             semesters.append(semester)
             query = "UPDATE ec_available_semesters SET semesters=%s WHERE xh=%s"
-            cursor.execute(query,(json.dumps(semesters),each_student['xh']))
+            cursor.execute(query, (json.dumps(semesters), each_student['xh']))
             print("Add semester to student [%s]%s 's record" % (each_student['xh'], each_student['xm']))
     count = count + 1
     if count % 100 == 0:
