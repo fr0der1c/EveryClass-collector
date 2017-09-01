@@ -8,23 +8,23 @@ from termcolor import cprint
 # Used to get row code for each row in separate files in raw_data
 # Usage:
 # Example: get_row_code(1)
-def get_row_code(semester,row_num):
+def get_row_code(semester, row_num):
     row_codes = {
-        '2016-2017-2':['0',
-                       'BFCA2900002E48B1B20AD34D4E4E50C8',
-                       '11DD7A497F57416EA11C4D01AD1DA66A',
-                       'A777C6C778AB462BB742C6640D58E0DD',
-                       '1AC61925F56341B494CBA5AEA3C4AC3B',
-                       'ADD7F6354105427EBA9EE72883DAF69F',
-                       '921723A66500482189BDEF39E4C87D61'
-                       ],
-        '2017-2018-1':['0',
-                       'B8427956D3B44C33A7D43B03F1CCA53C',
-                       '6E6B51D1653446F4B48D3CF4C043AAE0',
-                       '7919C7D683D24DF7B79E0950B41150B6',
-                       'B9E5DA797FFA456EAB6D60C381076D6E',
-                       '232B8B03DE624DF48CE6D4B4C395CEB0',
-                       '1DC1496195474800BBFBC17B2CA15FED']
+        '2016-2017-2': ['0',
+                        'BFCA2900002E48B1B20AD34D4E4E50C8',
+                        '11DD7A497F57416EA11C4D01AD1DA66A',
+                        'A777C6C778AB462BB742C6640D58E0DD',
+                        '1AC61925F56341B494CBA5AEA3C4AC3B',
+                        'ADD7F6354105427EBA9EE72883DAF69F',
+                        '921723A66500482189BDEF39E4C87D61'
+                        ],
+        '2017-2018-1': ['0',
+                        'B8427956D3B44C33A7D43B03F1CCA53C',
+                        '6E6B51D1653446F4B48D3CF4C043AAE0',
+                        '7919C7D683D24DF7B79E0950B41150B6',
+                        'B9E5DA797FFA456EAB6D60C381076D6E',
+                        '232B8B03DE624DF48CE6D4B4C395CEB0',
+                        '1DC1496195474800BBFBC17B2CA15FED']
     }
     return row_codes[semester][row_num]
 
@@ -87,6 +87,7 @@ def get_time_for_class(text):
         return '5'
     else:
         return '6'
+
 
 # Function: print_formatted_info
 # Used to print debug info

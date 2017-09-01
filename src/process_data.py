@@ -11,7 +11,7 @@ from termcolor import cprint
 xq = settings.SEMESTER
 conn = mysql.connector.connect(**settings.MYSQL_CONFIG)
 cursor = conn.cursor()
-names_json = open("stu_data_test.json")
+names_json = open("stu_data.json")
 names = json.load(names_json)
 class_info = {}
 my_class_list = []
@@ -41,8 +41,6 @@ def _append_student_to_class(stu_list, this_stu, class_id):
     if this_stu not in stu_list:  # CSU教务系统莫名可能同样课程显示两次，因此必须判断是否已经在学生列表中了，否则会导致意外情况
         stu_list.append(this_stu)
         query = "UPDATE ec_classes_" + get_semester_code_for_db(xq) + " SET students=%s WHERE id=%s"
-        if settings.DEBUG:
-            predefined.print_formatted_info(query)
         cursor.execute(query, (json.dumps(stu_list), class_id))
         conn.commit()
         cprint('[APPEND STUDENT]', end='', color='blue', attrs=['bold'])
@@ -53,31 +51,30 @@ def _append_student_to_class(stu_list, this_stu, class_id):
 # 增加一门课程
 def _add_new_course(clsname, class_time, row_number, teacher, duration, week, location, md5_value):
     cprint('[ADD CLASS]', end='', color="green", attrs=['bold'])
-    query = "INSERT INTO ec_classes_" + get_semester_code_for_db(
-        xq) + "(clsname, day, time, teacher, duration, week, location, students, id) VALUES (" \
-              "%s, %s, %s, %s, %s, %s, %s, %s, %s) "
-    if settings.DEBUG:
-        predefined.print_formatted_info(query)
-    cursor.execute(query, (
-        clsname, class_time, row_number, teacher, duration, week, location, json.dumps([stu['xh']]), md5_value))
+    query = "INSERT INTO ec_classes_" + get_semester_code_for_db(xq) + \
+            "(clsname, day, time, teacher, duration, week, location, students, id) " \
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) "
+    cursor.execute(query, (clsname, class_time, row_number, teacher, duration,
+                           week, location, json.dumps([stu['xh']]), md5_value))
     conn.commit()
     global add_new_course_count
     add_new_course_count = add_new_course_count + 1
 
 
 for stu in names:
-    cprint('Processing student: [%s]%s' % (stu['xh'], stu['xm']), attrs=['bold'])
-    file_addr = os.path.join('test_data2', stu['xs0101id'])
+    if settings.DEBUG:
+        cprint('Processing student: [%s]%s' % (stu['xh'], stu['xm']), attrs=['bold'])
+    file_addr = os.path.join('raw_data', stu['xs0101id'])
     file = open(file_addr + '.html', 'r')
     soup = BeautifulSoup(file, 'html.parser')
 
-    # ec_available_semesters 表检查
-    query = 'SELECT xh,semesters FROM ec_available_semesters WHERE xh=%s'
+    # ec_students 表检查
+    query = 'SELECT xh,semesters FROM ec_students WHERE xh=%s'
     cursor.execute(query, (stu['xh'],))
     fetch_result = cursor.fetchall()
     if not fetch_result:
         # 若找不到，则在 ec_available_semesters 表中新增学生
-        query = "INSERT INTO ec_available_semesters (xh, semesters, xs0101id, name) VALUES (%s, %s, %s, %s)"
+        query = "INSERT INTO ec_students (xh, semesters, xs0101id, name) VALUES (%s, %s, %s, %s)"
         cursor.execute(query, (stu['xh'], settings.SEMESTER, stu['xs0101id'], stu['xm']))
         conn.commit()
         table1_count_add = table1_count_add + 1
@@ -89,7 +86,7 @@ for stu in names:
         if settings.SEMESTER not in semesters:
             # 当前学期不在数据库中则加入(不判断的话可能重复加入)
             semesters.append(settings.SEMESTER)
-            query = "UPDATE ec_available_semesters SET semesters=%s WHERE xh=%s"
+            query = "UPDATE ec_students SET semesters=%s WHERE xh=%s"
             cursor.execute(query, (json.dumps(semesters), stu['xh']))
             conn.commit()
             table1_count_update = table1_count_update + 1
@@ -102,7 +99,8 @@ for stu in names:
     cursor.execute(query, (stu['xh'],))
     # 在数据库中找不到学生则增加学生
     if not cursor.fetchall():
-        print('[Add student to ec_students_%s]' % get_semester_code_for_db(xq))
+        if settings.DEBUG:
+            print('[Add student to ec_students_%s]' % get_semester_code_for_db(xq))
         for class_time in range(1, 8):
             for row_number in range(1, 7):
                 query_selector = 'div[id="' + get_row_code(xq, row_number) + '-' + str(
@@ -140,6 +138,7 @@ for stu in names:
                         _append_student_to_class(json.loads(class_fetch_result[0][7]), stu['xh'], md5.hexdigest())
 
                     del md5
+
                     print(class_info)
                     class_info.clear()
         # 对 my_class_list 去重
@@ -151,8 +150,8 @@ for stu in names:
             predefined.print_formatted_info(query)
 
         # 在学期表中新增学生
-        query = "INSERT INTO ec_students_" + get_semester_code_for_db(
-            xq) + " (xh, classes) VALUES (%s, %s)"
+        query = "INSERT INTO ec_students_" + get_semester_code_for_db(xq) \
+                + " (xh, classes) VALUES (%s, %s)"
         cursor.execute(query, (stu['xh'], json.dumps(class_list_final)))
 
         # 提交数据及清空 list
@@ -161,7 +160,8 @@ for stu in names:
         my_class_list.clear()
     # 如果学期表中已经存在数据就跳过（学期表只能从零开始，不能更新）
     else:
-        cprint('[pass] student already exists in %s' % "ec_students_" + get_semester_code_for_db(xq), color='blue')
+        print('[PASS] student [%s]%s already exists in %s'
+               % (stu['xh'], stu['xm'], "ec_students_" + get_semester_code_for_db(xq)))
         table2_count_pass = table2_count_pass + 1
 
     # 每100个处理完毕告知一次
@@ -175,10 +175,10 @@ conn.close()
 # 统计数据
 cprint("Finished!", color='green', attrs=['bold'])
 cprint("%s students in total." % total_count)
-cprint("Added %s, updated %s,passed %s entries in ec_available_semesters." % (table1_count_add,
-                                                                              table1_count_update,
-                                                                              table1_count_pass
-                                                                              ))
+cprint("Added %s, updated %s, passed %s students in ec_students." % (table1_count_add,
+                                                                     table1_count_update,
+                                                                     table1_count_pass
+                                                                     ))
 cprint("Added %s, passed %s students in ec_students_%s." % (table2_count_add, table2_count_pass,
                                                             get_semester_code_for_db(xq)
                                                             ))
