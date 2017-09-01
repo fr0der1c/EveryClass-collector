@@ -21,12 +21,13 @@ table1_count_update = 0
 table1_count_pass = 0
 table2_count_pass = 0
 table2_count_add = 0
+append_to_course_count = 0
+add_new_course_count = 0
 total_count = 0
 
 
 # 获得一行课程信息
 def _query_class(md5_value):
-    print('query class %s' % md5_value)
     query = "SELECT clsname,day,time,teacher,duration,week,location,students,id FROM ec_classes_" \
             + get_semester_code_for_db(xq) + " WHERE id=%s"
     if settings.DEBUG:
@@ -45,10 +46,12 @@ def _append_student_to_class(stu_list, this_stu, class_id):
         cursor.execute(query, (json.dumps(stu_list), class_id))
         conn.commit()
         cprint('[APPEND STUDENT]', end='', color='blue', attrs=['bold'])
+        global append_to_course_count
+        append_to_course_count = append_to_course_count + 1
 
 
 # 增加一门课程
-def _add_new_class(clsname, class_time, row_number, teacher, duration, week, location, md5_value):
+def _add_new_course(clsname, class_time, row_number, teacher, duration, week, location, md5_value):
     cprint('[ADD CLASS]', end='', color="green", attrs=['bold'])
     query = "INSERT INTO ec_classes_" + get_semester_code_for_db(
         xq) + "(clsname, day, time, teacher, duration, week, location, students, id) VALUES (" \
@@ -58,11 +61,13 @@ def _add_new_class(clsname, class_time, row_number, teacher, duration, week, loc
     cursor.execute(query, (
         clsname, class_time, row_number, teacher, duration, week, location, json.dumps([stu['xh']]), md5_value))
     conn.commit()
+    global add_new_course_count
+    add_new_course_count = add_new_course_count + 1
 
 
 for stu in names:
     cprint('Processing student: [%s]%s' % (stu['xh'], stu['xm']), attrs=['bold'])
-    file_addr = os.path.join('test_data1', stu['xs0101id'])
+    file_addr = os.path.join('test_data2', stu['xs0101id'])
     file = open(file_addr + '.html', 'r')
     soup = BeautifulSoup(file, 'html.parser')
 
@@ -100,7 +105,7 @@ for stu in names:
         print('[Add student to ec_students_%s]' % get_semester_code_for_db(xq))
         for class_time in range(1, 8):
             for row_number in range(1, 7):
-                query_selector = 'div[id="' + get_row_code(row_number) + '-' + str(
+                query_selector = 'div[id="' + get_row_code(xq, row_number) + '-' + str(
                     class_time) + '-2"] a'
                 for i in soup.select(query_selector):  # i 为 a 元素
                     class_info['clsname'] = i.contents[0]
@@ -125,10 +130,10 @@ for stu in names:
 
                     # 如果课程不存在，增加课程
                     if not class_fetch_result:
-                        _add_new_class(str(class_info['clsname']), class_time, row_number,
-                                       str(class_info['teacher']), str(class_info['duration']),
-                                       str(class_info['week']), str(class_info['location']),
-                                       md5.hexdigest())
+                        _add_new_course(str(class_info['clsname']), class_time, row_number,
+                                        str(class_info['teacher']), str(class_info['duration']),
+                                        str(class_info['week']), str(class_info['location']),
+                                        md5.hexdigest())
 
                     # 如果课程存在，在课程entry中增加学生
                     else:
@@ -170,7 +175,11 @@ conn.close()
 # 统计数据
 cprint("Finished!", color='green', attrs=['bold'])
 cprint("%s students in total." % total_count)
-cprint("Added %s, updated %s,passed %s entries in ec_available_semesters." % (table1_count_add, table1_count_update,
-                                                                              table1_count_pass))
+cprint("Added %s, updated %s,passed %s entries in ec_available_semesters." % (table1_count_add,
+                                                                              table1_count_update,
+                                                                              table1_count_pass
+                                                                              ))
 cprint("Added %s, passed %s students in ec_students_%s." % (table2_count_add, table2_count_pass,
-                                                           get_semester_code_for_db(xq)))
+                                                            get_semester_code_for_db(xq)
+                                                            ))
+cprint("Added %s new courses, %s times append student to course." % (add_new_course_count, append_to_course_count))
