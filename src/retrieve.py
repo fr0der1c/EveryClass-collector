@@ -28,7 +28,7 @@ def retrieve_classtable():
     data = {
         'type': 'xs0101',
         'isview': '0',
-        'xnxq01id': settings.GLOBAL_SEMESTER,
+        'xnxq01id': settings.SEMESTER,
         'xs0101id': 'xs0101id',
         'xs': u'xs',
         'sfFD': '1'

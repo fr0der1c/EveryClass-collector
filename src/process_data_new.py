@@ -21,6 +21,7 @@ table1_count_update = 0
 table1_count_pass = 0
 table2_count_pass = 0
 table2_count_add = 0
+append_to_class_count = 0
 total_count = 0
 
 

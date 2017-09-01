@@ -6,7 +6,7 @@ from predefined import get_semester_code_for_db
 
 conn = mysql.connector.connect(**settings.MYSQL_CONFIG)
 cursor = conn.cursor()
-query = 'SELECT xh FROM ec_students_' + get_semester_code_for_db(settings.GLOBAL_SEMESTER)
+query = 'SELECT xh FROM ec_students_' + get_semester_code_for_db(settings.SEMESTER)
 cursor.execute(query)
 students = cursor.fetchall()
 unknown_prefixes = set()
