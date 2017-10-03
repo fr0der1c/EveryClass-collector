@@ -22,7 +22,7 @@ header_info = {
 
 
 def retrieve_classtable():
-    file = open("stu_data.json")
+    file = open("stu_data_103.json")
     stu_data = json.load(file)
     url = 'http://csujwc.its.csu.edu.cn/jiaowu/pkgl/llsykb/llsykb_kb.jsp'
     data = {
@@ -36,6 +36,10 @@ def retrieve_classtable():
     s = requests.session()
     count = 0
     for i in stu_data:
+        count = count + 1
+        # 中断
+        #if count < 10275:
+        #    continue
         data['xs0101id'] = i['xs0101id']
         data['xs'] = i['xm']
         print('Trying to fetch data for %s...' % data['xs0101id'])
@@ -44,10 +48,10 @@ def retrieve_classtable():
         with open(local_filename, 'wb') as f:
             f.write(req1.content)
         print(req1)
-        count = count + 1
         if count % 100 == 0:
-            print('Finished %s' % count)
-    cprint('Finished.',color='green')
+            cprint('Finished %s' % count, color='green')
+    cprint('Finished.', color='green')
+
 
 if __name__ == '__main__':
     retrieve_classtable()

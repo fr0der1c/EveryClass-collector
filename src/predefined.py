@@ -5,9 +5,9 @@ from termcolor import cprint
 
 
 # Function: get_row_code
-# Used to get row code for each row in separate files in raw_data
-# Usage:
-# Example: get_row_code(1)
+# Used to get row code for each row in separate files in raw_data. The value will change
+# when educational management system refreshes data.
+# Usage example: get_row_code(1)
 def get_row_code(semester, row_num):
     row_codes = {
         '2016-2017-2': ['0',
@@ -19,12 +19,12 @@ def get_row_code(semester, row_num):
                         '921723A66500482189BDEF39E4C87D61'
                         ],
         '2017-2018-1': ['0',
-                        'B8427956D3B44C33A7D43B03F1CCA53C',
-                        '6E6B51D1653446F4B48D3CF4C043AAE0',
-                        '7919C7D683D24DF7B79E0950B41150B6',
-                        'B9E5DA797FFA456EAB6D60C381076D6E',
-                        '232B8B03DE624DF48CE6D4B4C395CEB0',
-                        '1DC1496195474800BBFBC17B2CA15FED']
+                        '1A1D906AA5764D3B8EE7DBB72C825D37',
+                        'B276E5D4A2414CAE95C3D5D0261DDAD9',
+                        '6EBE1D8AF0BC4A19B032EDB30BF9DBE1',
+                        '13AA72C5C821491792E98546D9E5F4C6',
+                        '04930EB79BF748879F01CE4C672D304B',
+                        'CC2AF831EFD7458BB24437E0FA7BC55D']
     }
     return row_codes[semester][row_num]
 

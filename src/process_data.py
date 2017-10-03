@@ -63,7 +63,7 @@ def _add_new_course(clsname, class_time, row_number, teacher, duration, week, lo
 
 for stu in names:
     if settings.DEBUG:
-        cprint('Processing student: [%s]%s' % (stu['xh'], stu['xm']), attrs=['bold'])
+        cprint('Processing student: [xh=%s][xs0101id=%s]%s' % (stu['xh'], stu['xs0101id'], stu['xm']), attrs=['bold'])
     file_addr = os.path.join('raw_data', stu['xs0101id'])
     file = open(file_addr + '.html', 'r')
     soup = BeautifulSoup(file, 'html.parser')
@@ -73,9 +73,9 @@ for stu in names:
     cursor.execute(query, (stu['xh'],))
     fetch_result = cursor.fetchall()
     if not fetch_result:
-        # 若找不到，则在 ec_available_semesters 表中新增学生
+        # 若找不到，则在 ec_students 表中新增学生
         query = "INSERT INTO ec_students (xh, semesters, xs0101id, name) VALUES (%s, %s, %s, %s)"
-        cursor.execute(query, (stu['xh'], settings.SEMESTER, stu['xs0101id'], stu['xm']))
+        cursor.execute(query, (stu['xh'], [settings.SEMESTER,], stu['xs0101id'], stu['xm']))
         conn.commit()
         table1_count_add = table1_count_add + 1
     else:
