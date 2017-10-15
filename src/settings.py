@@ -1,7 +1,7 @@
 # This file contains global settings of data_collector
 # Created Apr. 19, 2017 by Frederic
 SEMESTER = "2017-2018-1"
-DEBUG = True
+DEBUG = False
 
 # MySQL Config
 MYSQL_CONFIG = {
@@ -19,3 +19,4 @@ COOKIE_JW = 'JSESSIONID=1C736390AFA9117299CC51F8A2D20F3E; BIGipServerpool_jwctes
 COOKIE_ENG = 'ASPSESSIONIDCAQTSACT=LHBFPBODGNPMGHEPJNLDBNLM; ASP.NET_SessionId=xpud3z45w1hh5i45j4ptf5vd; ASPSESSIONIDCATQSBCT=CDPNOMLDGEHKJGDHDLMJJNEC'
 ENGLISH_CLASS_URL = 'http://122.207.65.163/agent161/remote/get_englishClass_2017.asp'
 ENGLISH_CLASS_NAMEROLL_URL = 'http://122.207.65.163/agent161/remote/get_englishClass_nameroll_2017.asp'
+ENGLISH_CLASS_URL_17 = 'http://122.207.65.163/nodejs2/db/mobile/classes.js?%7B%22search%22:%7B%22courseNo%22:%7B%22$gt%22:300%7D%7D,%22fields%22:%7B%22_id%22:0%7D,%22options%22:%7B%22limit%22:4060,%22skip%22:0%7D%7D'

@@ -22,7 +22,7 @@ header_info = {
 
 
 def retrieve_classtable():
-    file = open("stu_data_103.json")
+    file = open("stu_data.json")
     stu_data = json.load(file)
     url = 'http://csujwc.its.csu.edu.cn/jiaowu/pkgl/llsykb/llsykb_kb.jsp'
     data = {

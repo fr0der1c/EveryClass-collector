@@ -43,14 +43,16 @@ def _append_student_to_class(stu_list, this_stu, class_id):
         query = "UPDATE ec_classes_" + get_semester_code_for_db(xq) + " SET students=%s WHERE id=%s"
         cursor.execute(query, (json.dumps(stu_list), class_id))
         conn.commit()
-        cprint('[APPEND STUDENT]', end='', color='blue', attrs=['bold'])
+        if settings.DEBUG:
+            cprint('[APPEND STUDENT]', end='', color='blue', attrs=['bold'])
         global append_to_course_count
         append_to_course_count = append_to_course_count + 1
 
 
 # 增加一门课程
 def _add_new_course(clsname, class_time, row_number, teacher, duration, week, location, md5_value):
-    cprint('[ADD CLASS]', end='', color="green", attrs=['bold'])
+    if settings.DEBUG:
+        cprint('[ADD CLASS]', end='', color="green", attrs=['bold'])
     query = "INSERT INTO ec_classes_" + get_semester_code_for_db(xq) + \
             "(clsname, day, time, teacher, duration, week, location, students, id) " \
             "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) "
@@ -75,7 +77,7 @@ for stu in names:
     if not fetch_result:
         # 若找不到，则在 ec_students 表中新增学生
         query = "INSERT INTO ec_students (xh, semesters, xs0101id, name) VALUES (%s, %s, %s, %s)"
-        cursor.execute(query, (stu['xh'], [settings.SEMESTER,], stu['xs0101id'], stu['xm']))
+        cursor.execute(query, (stu['xh'], json.dumps([settings.SEMESTER,]), stu['xs0101id'], stu['xm']))
         conn.commit()
         table1_count_add = table1_count_add + 1
     else:
@@ -115,9 +117,13 @@ for stu in names:
                         i.select('font[title="单双周"]')[0].string
                     class_info['location'] = 'None' if not i.select('font[title="上课地点教室"]') else \
                         i.select('font[title="上课地点教室"]')[0].string
-                    class_str = str(class_info['clsname']) + str(class_info['teacher']) + str(
-                        class_info['duration']) + str(class_info['week']) + str(class_info['location']) + str(
-                        class_time) + str(row_number)  # 生成class_str用于生成课程 MD5识别码
+                    class_str = str(class_info['clsname']) + \
+                                str(class_info['teacher']) + \
+                                str(class_info['duration']) + \
+                                str(class_info['week']) + \
+                                str(class_info['location']) + \
+                                str(class_time) + \
+                                str(row_number)  # 生成class_str用于生成课程 MD5识别码
                     md5 = hashlib.md5()
                     md5.update(class_str.encode('utf-8'))
                     class_info['hash'] = md5.hexdigest()
@@ -138,8 +144,9 @@ for stu in names:
                         _append_student_to_class(json.loads(class_fetch_result[0][7]), stu['xh'], md5.hexdigest())
 
                     del md5
-
-                    print(class_info)
+                    
+                    if settings.DEBUG:
+                        print(class_info)
                     class_info.clear()
         # 对 my_class_list 去重
         class_list_final = list(set(my_class_list))
