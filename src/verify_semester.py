@@ -12,7 +12,6 @@ import json
 import predefined
 from termcolor import cprint
 
-
 conn = mysql.connector.connect(**settings.MYSQL_CONFIG)
 cursor = conn.cursor()
 cursor2 = conn.cursor()
@@ -29,9 +28,8 @@ for each_student in students:
         stu_result = cursor2.fetchall()
 
         if not stu_result:
-            print(xh,each_semester)
+            print(xh, each_semester)
             query = "UPDATE ec_students SET semesters=%s WHERE xh=%s"
             semesters.remove(each_semester)
-            cursor2.execute(query,(json.dumps(semesters),xh))
+            cursor2.execute(query, (json.dumps(semesters), xh))
             conn.commit()
-

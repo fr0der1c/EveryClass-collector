@@ -4,7 +4,11 @@ import requests
 import json
 import settings
 from termcolor import cprint
+from threading import Thread
+from queue import Queue
 
+url = 'http://csujwc.its.csu.edu.cn/jiaowu/pkgl/llsykb/llsykb_kb.jsp'
+num_worker_threads = 5
 header_info = {
     "User-Agent": settings.USER_AGENT,
     "Referer": "http://csujwc.its.csu.edu.cn/jiaowu/pkgl/llsykb/llsykb_find_xs0101.jsp?xnxq01id=2016-2017-2&init=1&isview=0",
@@ -19,39 +23,60 @@ header_info = {
     'Content-Length': '103',
     'Cookie': settings.COOKIE_JW,
 }
+queue = Queue(0)
 
 
-def retrieve_classtable():
-    file = open("stu_data.json")
+class SpiderThread(Thread):
+    def __init__(self, thread_id):
+        super().__init__()
+        self.thread_id = thread_id
+
+    def run(self):
+        while True:
+            this = queue.get()
+            if this is None:
+                break
+
+            s = requests.session()
+            data = {'type': 'xs0101', 'isview': '0', 'xnxq01id': settings.SEMESTER, 'xs0101id': this['xs0101id'],
+                    'xs': this['xs'], 'sfFD': '1'}
+
+            print('Trying to fetch data for %s...' % this)
+            req1 = s.post(url, headers=header_info, data=data)
+            local_filename = 'raw_data/' + data['xs0101id'] + '.html'
+            with open(local_filename, 'wb') as f:
+                f.write(req1.content)
+            print(req1)
+
+            queue.task_done()
+
+
+def retrieve():
+    file = open(settings.JSON_FILE)
     stu_data = json.load(file)
-    url = 'http://csujwc.its.csu.edu.cn/jiaowu/pkgl/llsykb/llsykb_kb.jsp'
-    data = {
-        'type': 'xs0101',
-        'isview': '0',
-        'xnxq01id': settings.SEMESTER,
-        'xs0101id': 'xs0101id',
-        'xs': u'xs',
-        'sfFD': '1'
-    }
-    s = requests.session()
-    count = 0
+
+    # Add task to queue
     for i in stu_data:
-        count = count + 1
-        # 中断
-        #if count < 10275:
-        #    continue
-        data['xs0101id'] = i['xs0101id']
-        data['xs'] = i['xm']
-        print('Trying to fetch data for %s...' % data['xs0101id'])
-        req1 = s.post(url, headers=header_info, data=data)
-        local_filename = 'raw_data/' + data['xs0101id'] + '.html'
-        with open(local_filename, 'wb') as f:
-            f.write(req1.content)
-        print(req1)
-        if count % 100 == 0:
-            cprint('Finished %s' % count, color='green')
+        queue.put({'xs0101id': i['xs0101id'],
+                   'xs': i['xm']})
+    cprint('Task scheduling finished.', color='green')
+
+    # Create threads and starts them
+    threads = [SpiderThread(i) for i in range(num_worker_threads)]
+    for each_thread in threads:
+        each_thread.start()
+
+    # block until all tasks are done
+    queue.join()
+
+    # stop workers
+    for i in range(num_worker_threads):
+        queue.put(None)
+    for each_thread in threads:
+        each_thread.join()
+
     cprint('Finished.', color='green')
 
 
 if __name__ == '__main__':
-    retrieve_classtable()
+    retrieve()

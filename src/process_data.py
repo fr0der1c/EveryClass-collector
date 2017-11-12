@@ -11,7 +11,7 @@ from termcolor import cprint
 xq = settings.SEMESTER
 conn = mysql.connector.connect(**settings.MYSQL_CONFIG)
 cursor = conn.cursor()
-names_json = open("stu_data.json")
+names_json = open(settings.JSON_FILE)
 names = json.load(names_json)
 class_info = {}
 my_class_list = []

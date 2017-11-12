@@ -1,6 +1,7 @@
 # This file contains global settings of data_collector
 # Created Apr. 19, 2017 by Frederic
 SEMESTER = "2017-2018-1"
+JSON_FILE = "stu_data_1112.json"
 DEBUG = False
 
 # MySQL Config
@@ -15,7 +16,7 @@ MYSQL_CONFIG = {
 
 # Network settings
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/602.4.8 (KHTML, like Gecko) Version/10.0.3 Safari/602.4.8'
-COOKIE_JW = 'JSESSIONID=1C736390AFA9117299CC51F8A2D20F3E; BIGipServerpool_jwctest=2017969610.20480.0000'
+COOKIE_JW = 'JSESSIONID=A32385D45A9A042BC42BB92F0FF6312D; BIGipServerpool_jwctest=2034746826.20480.0000'
 COOKIE_ENG = 'ASPSESSIONIDCAQTSACT=LHBFPBODGNPMGHEPJNLDBNLM; ASP.NET_SessionId=xpud3z45w1hh5i45j4ptf5vd; ASPSESSIONIDCATQSBCT=CDPNOMLDGEHKJGDHDLMJJNEC'
 ENGLISH_CLASS_URL = 'http://122.207.65.163/agent161/remote/get_englishClass_2017.asp'
 ENGLISH_CLASS_NAMEROLL_URL = 'http://122.207.65.163/agent161/remote/get_englishClass_nameroll_2017.asp'
