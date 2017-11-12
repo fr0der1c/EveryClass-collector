@@ -3,12 +3,13 @@
 import requests
 import json
 import settings
+import time
 from termcolor import cprint
 from threading import Thread
 from queue import Queue
 
 url = 'http://csujwc.its.csu.edu.cn/jiaowu/pkgl/llsykb/llsykb_kb.jsp'
-num_worker_threads = 5
+num_worker_threads = 30
 header_info = {
     "User-Agent": settings.USER_AGENT,
     "Referer": "http://csujwc.its.csu.edu.cn/jiaowu/pkgl/llsykb/llsykb_find_xs0101.jsp?xnxq01id=2016-2017-2&init=1&isview=0",
@@ -32,6 +33,15 @@ class SpiderThread(Thread):
         self.thread_id = thread_id
 
     def run(self):
+        def download(data):
+            req1 = s.post(url, headers=header_info, data=data)
+            local_filename = 'raw_data/' + data['xs0101id'] + '.html'
+            with open(local_filename, 'wb') as f:
+                f.write(req1.content)
+            print(req1)
+            nonlocal success
+            success = True
+
         while True:
             this = queue.get()
             if this is None:
@@ -41,12 +51,15 @@ class SpiderThread(Thread):
             data = {'type': 'xs0101', 'isview': '0', 'xnxq01id': settings.SEMESTER, 'xs0101id': this['xs0101id'],
                     'xs': this['xs'], 'sfFD': '1'}
 
-            print('Trying to fetch data for %s...' % this)
-            req1 = s.post(url, headers=header_info, data=data)
-            local_filename = 'raw_data/' + data['xs0101id'] + '.html'
-            with open(local_filename, 'wb') as f:
-                f.write(req1.content)
-            print(req1)
+            print('[Thread %s]Trying to fetch data for %s...' % (self.thread_id, this))
+
+            success = False
+            while not success:
+                try:
+                    download(data=data)
+                except:
+                    cprint("[Thread %s]An error occurred. Retry after 2 seconds" % self.thread_id, color="red")
+                    time.sleep(2)
 
             queue.task_done()
 
@@ -54,9 +67,13 @@ class SpiderThread(Thread):
 def retrieve():
     file = open(settings.JSON_FILE)
     stu_data = json.load(file)
+    count = 0
 
     # Add task to queue
     for i in stu_data:
+        count += 1
+        if count < 25840:
+            continue
         queue.put({'xs0101id': i['xs0101id'],
                    'xs': i['xm']})
     cprint('Task scheduling finished.', color='green')
