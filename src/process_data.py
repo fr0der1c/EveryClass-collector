@@ -1,8 +1,5 @@
-"""
-Processes data from raw_data directory and save them to database
-
-Created Mar. 26, 2017 by Frederic
-"""
+# This module processes data from raw_data directory and save them to database
+# Created Mar. 26, 2017 by Frederic
 import os, hashlib, json, mysql.connector
 from bs4 import BeautifulSoup
 import predefined
@@ -67,14 +64,14 @@ def _add_new_course(clsname, class_time, row_number, teacher, duration, week, lo
 
 
 def process():
-    global table1_count_add, table1_count_pass, table1_count_update, table2_count_add, table2_count_pass
+    global table1_count_add, table1_count_pass, table2_count_add, table2_count_pass, table1_count_update
     global total_count, add_new_course_count, append_to_course_count
     for stu in names:
         if settings.DEBUG:
             cprint('Processing student: [xh=%s][xs0101id=%s]%s' % (stu['xh'], stu['xs0101id'], stu['xm']),
                    attrs=['bold'])
-        file_address = os.path.join('raw_data', stu['xs0101id'])
-        file = open(file_address + '.html', 'r')
+        file_addr = os.path.join('raw_data', stu['xs0101id'])
+        file = open(file_addr + '.html', 'r')
         soup = BeautifulSoup(file, 'html.parser')
 
         # ec_students 表检查

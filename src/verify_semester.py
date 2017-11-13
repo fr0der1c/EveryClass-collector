@@ -30,7 +30,7 @@ def verify():
             stu_result = cursor2.fetchall()
 
             if not stu_result:
-                print(xh, each_semester)
+                print("Remove %s in %s" % (each_semester, xh))
                 query = "UPDATE ec_students SET semesters=%s WHERE xh=%s"
                 semesters.remove(each_semester)
                 cursor2.execute(query, (json.dumps(semesters), xh))
