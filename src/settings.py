@@ -1,8 +1,11 @@
 # This file contains global settings of data_collector
 # Created Apr. 19, 2017 by Frederic
+import json
 SEMESTER = "2017-2018-1"
-JSON_FILE = "stu_data_1112.json"
-DEBUG = True
+with open("stu_data_version.json") as f:
+    JSON_FILE = json.load(f)["stu_data_json_name"]
+DEBUG = False
+DEBUG_LEVEL = 0  # 5 means most
 
 # MySQL Config
 MYSQL_CONFIG = {
@@ -12,7 +15,6 @@ MYSQL_CONFIG = {
     'port': '3306',
     'database': 'everyclass',
     'raise_on_warnings': True,
-    'pool_size':5,
 }
 
 # Network settings
