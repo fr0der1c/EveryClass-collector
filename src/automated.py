@@ -62,5 +62,5 @@ if __name__ == "__main__":
     # clean_directory()
     # retrieve()  # not tested
     # clean_database()
-    # process()
+    process()
     verify()  # todo to test

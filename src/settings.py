@@ -3,6 +3,7 @@
 SEMESTER = "2017-2018-1"
 JSON_FILE = "stu_data_1112.json"
 DEBUG = False
+DEBUG_LEVEL = 5  # 5 means most
 
 # MySQL Config
 MYSQL_CONFIG = {
