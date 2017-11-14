@@ -60,7 +60,7 @@ def clean_database():
 if __name__ == "__main__":
     # fix_json()
     # clean_directory()
-    # retrieve()  # not tested
+    retrieve()  # not tested
     # clean_database()
-    process()
-    verify()  # todo to test
+    # process()
+    # verify()
