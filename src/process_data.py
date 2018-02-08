@@ -1,7 +1,5 @@
 """
 Processes data from raw_data directory and save them to database
-
-Created Mar. 26, 2017 by Frederic
 """
 import os, hashlib, json, mysql.connector
 from bs4 import BeautifulSoup
@@ -17,8 +15,7 @@ from queue import Queue
 xq = settings.SEMESTER
 db_lock = Lock()
 count_lock = Lock()
-names_json = open(settings.JSON_FILE)
-names = json.load(names_json)
+
 TABLE1_COUNT_ADD = TABLE1_COUNT_UPDATE = TABLE1_COUNT_PASS = TABLE2_COUNT_PASS = TABLE2_COUNT_ADD = 0
 APPEND_TO_COURSE_COUNT = ADD_NEW_COURSE_COUNT = TOTAL_COUNT = 0
 queue = Queue(0)
@@ -256,6 +253,11 @@ class ProcessThread(Thread):
 
 
 def process():
+    with open("stu_data_version.json") as f:
+        JSON_FILE = json.load(f)["stu_data_json_name"]
+    names_json = open(JSON_FILE)
+    names = json.load(names_json)
+
     # Put student in queue
     for stu in names:
         queue.put(stu)

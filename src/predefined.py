@@ -1,14 +1,20 @@
-# -*- coding: utf-8 -*-
-# This file contains predefined information which needs to be imported by other modules
-# Created Apr. 19, 2017 by Frederic
+"""
+predefined information which needs to be imported by other modules
+
+Created Apr. 19, 2017 by Frederic
+"""
 from termcolor import cprint
 
 
-# Function: get_row_code
-# Used to get row code for each row in separate files in raw_data. The value will change
-# when educational management system refreshes data.
-# Usage example: get_row_code(1)
 def get_row_code(semester, row_num):
+    """
+    get row code for each row in separate files in raw_data. The value will change
+    when educational management system refreshes data.
+
+    :param semester: the semester you want to query, in form like '2017-2018-2'
+    :param row_num: row number, like 1
+    :return: the code of the row in html
+    """
     row_codes = {
         '2016-2017-2': ['0',
                         'BFCA2900002E48B1B20AD34D4E4E50C8',
@@ -16,27 +22,37 @@ def get_row_code(semester, row_num):
                         'A777C6C778AB462BB742C6640D58E0DD',
                         '1AC61925F56341B494CBA5AEA3C4AC3B',
                         'ADD7F6354105427EBA9EE72883DAF69F',
-                        '921723A66500482189BDEF39E4C87D61'
-                        ],
+                        '921723A66500482189BDEF39E4C87D61'],
         '2017-2018-1': ['0',
                         '1A1D906AA5764D3B8EE7DBB72C825D37',
                         'B276E5D4A2414CAE95C3D5D0261DDAD9',
                         '6EBE1D8AF0BC4A19B032EDB30BF9DBE1',
                         '13AA72C5C821491792E98546D9E5F4C6',
                         '04930EB79BF748879F01CE4C672D304B',
-                        'CC2AF831EFD7458BB24437E0FA7BC55D']
+                        'CC2AF831EFD7458BB24437E0FA7BC55D'],
+        '2017-2018-2': ['0',
+                        '5FC694DF384B4F07B6C9A354C679D642',
+                        '0168D119CF4841EF9C4A3256DE9CEEB0',
+                        '4F575BF85A114D6B85D5FCD0588177C8',
+                        '7402CDCF73004B62BD0AEECD5A042321',
+                        '23A573BCDA834486837C0496F853376B',
+                        'BCF4D51408CC44BA9E2932392D0FDB5C']
     }
     return row_codes[semester][row_num]
 
 
-# Function: semester_code
-# For tables like ec_students or ec_classes, each semesters will have their own
-# tables to reduce server pressure while querying. For example, the student table for second semester during 2016 and
-#  2017 will be "ec_students_16_17_2". This function transforms semester codes like "2016-2017-2" to table name type
-# like "16_17_2"
-# Usage:
-# Example: semester_code("2016-2017-2")
 def get_semester_code_for_db(xq):
+    """
+    For tables like ec_students or ec_classes, each semesters will have their own
+    tables to reduce server pressure while querying. For example, the student table
+    for second semester during 2016 and 2017 will be "ec_students_16_17_2". This function
+    transforms semester codes like "2016-2017-2" to table name type like "16_17_2"
+
+    Example: semester_code("2016-2017-2")
+
+    :param xq:
+    :return:
+    """
     if xq == '':
         import settings
         return get_semester_code_for_db(settings.SEMESTER)
@@ -46,11 +62,13 @@ def get_semester_code_for_db(xq):
         return str(splited[0][2:4] + "_" + splited[1][2:4] + "_" + splited[2])
 
 
-# Function: get_day_for_class
-# Used to transform day like "周一" to digital form "1"
-# Usage:
-# Example: get_day_for_class("周一")
 def get_day_for_class(chinese):
+    """
+    transform day like "周一" to digital form "1"
+
+    :param chinese: chinese character
+    :return: 1/2/3/4/5/6/7
+    """
     if chinese == '周一':
         return '1'
     elif chinese == '周二':
@@ -67,12 +85,16 @@ def get_day_for_class(chinese):
         return '7'
 
 
-# Function: get_time_for_class
-# Used to transform time like "1-2" to form "1"
-# Usage:
-# Example: get_time_for_class("1-2")
-#    Parameter is expected to be "1-2", "3-4", "5-6", "7-8", "9-10", "11-12"
 def get_time_for_class(text):
+    """
+    transform time like "1-2" to form "1"
+    # Usage:
+    # Example: get_time_for_class("1-2")
+    #    Parameter is expected to be "1-2", "3-4", "5-6", "7-8", "9-10", "11-12"
+
+    :param text:
+    :return:
+    """
     if text == '1-2':
         return '1'
     elif text == '3-4':
@@ -89,14 +111,20 @@ def get_time_for_class(text):
         return '6'
 
 
-# Function: print_formatted_info
-# Used to print debug info
-# Usage:
-# 1. print_formatted_info([list, dict and so on data types])
-#    Won't show "---DEBUG---" flags
-# 2. print_formatted_info([list, dict and so on data types],True)
-#    Will show "---DEBUG---" flags
 def print_formatted_info(info, show_debug_tip=False, info_about="DEBUG"):
+    """
+    print debug info
+    # Usage:
+    # 1. print_formatted_info([list, dict and so on data types])
+    #    Won't show "---DEBUG---" flags
+    # 2. print_formatted_info([list, dict and so on data types],True)
+    #    Will show "---DEBUG---" flags
+
+    :param info:
+    :param show_debug_tip:
+    :param info_about:
+    :return:
+    """
     if show_debug_tip:
         cprint("-----" + info_about + "-----", "blue", attrs=['bold'])
     if isinstance(info, dict):
@@ -111,9 +139,11 @@ def print_formatted_info(info, show_debug_tip=False, info_about="DEBUG"):
         cprint("----" + info_about + " ENDS----", "blue", attrs=['bold'])
 
 
-# Function: create_tables
-# Used to create tables for a semester
 def create_tables():
+    """
+    create tables for a semester
+
+    """
     import mysql.connector
     from . import settings
     conn = mysql.connector.connect(**settings.MYSQL_CONFIG)

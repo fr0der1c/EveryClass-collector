@@ -20,4 +20,7 @@ def compare_json(old, new):
 
 
 if __name__ == "__main__":
-    compare_json(old="stu_data_1029.json", new="stu_data_1112.json")
+    old_json = input('Old json:')
+    new_json = input('New json:')
+
+    compare_json(old=old_json, new=new_json)

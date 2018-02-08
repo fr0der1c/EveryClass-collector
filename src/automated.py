@@ -7,14 +7,6 @@ from predefined import get_semester_code_for_db
 from retrieve import retrieve
 from verify_semester import verify
 from stu_data_json_compare import compare_json
-from process_data import process
-
-"""
-This is automated script for updating information.
-1. Save raw student data information to stu_data_raw.txt
-2. Change old_json_file in settings
-3. Run this script
-"""
 
 
 def fix_json(old_json_filename):
@@ -35,9 +27,13 @@ def fix_json(old_json_filename):
         text = text.replace('xh', '"xh"')
 
         json_file.write(text)
-    compare_json(old=old_json_filename, new=new_json_filename)
 
-    with open("stu_data_version.json") as f:
+    to_compare = input('Do you need to compare the old and new student list json? (y/n)')
+    if to_compare == 'y':
+        print('Comparing old and new json:')
+        compare_json(old=old_json_filename, new=new_json_filename)
+
+    with open("stu_data_version.json", 'w') as f:
         f.write(json.dumps({"stu_data_json_name": new_json_filename}))
 
 
@@ -47,9 +43,10 @@ def clean_directory():
 
     :return: none
     """
-    for each in os.listdir(os.path.join(os.getcwd(), 'raw_data')):
-        os.remove(each)
-    retrieve()
+    import shutil
+    folder = os.path.join(os.getcwd(), 'raw_data')
+    shutil.rmtree(folder)
+    os.mkdir(folder)
 
 
 def clean_database():
@@ -70,12 +67,64 @@ def clean_database():
 
 
 if __name__ == "__main__":
-    with open("stu_data_version.json") as f:
-        old_json_file = json.load(f)["stu_data_json_name"]
+    command = input('Select the process you want:\n'
+                    '1. Update data\n'
+                    '2. Get data of new semester\n'
+                    'Your choice:')
 
-    fix_json(old_json_file)
-    clean_directory()
-    retrieve()
-    clean_database()
-    process()
-    verify()
+    if command == '1':
+        print("""
+        To update data of this semester:
+        1. Save raw student data information to stu_data_raw.txt
+        2. Change Cookies and semester in settings
+        3. You may go to predefined.py and add the row code of this semester(sorry, hard-coded)
+        4. Press Enter
+        """)
+        input('')
+
+        with open("stu_data_version.json") as f:
+            old_json_file = json.load(f)["stu_data_json_name"]
+
+        fix_json(old_json_file)
+
+        prompt = input('Clear the raw_data dir? (y/n)')
+        if prompt == 'y':
+            clean_directory()
+
+        retrieve()
+        clean_database()
+
+        from process_data import process
+
+        process()
+
+        verify()
+    elif command == '2':
+        print("""
+        To add a new semester:
+        1. Save raw student data information to stu_data_raw.txt
+        2. Change Cookies and semester in settings
+        3. Add new empty table for new semester
+        4. Go to predefined.py and add the row code of this semester(sorry, hard-coded)
+        5. Press Enter
+        """)
+        input('')
+        with open("stu_data_version.json") as f:
+            old_json_file = json.load(f)["stu_data_json_name"]
+
+        # fix_json(old_json_file)
+
+        prompt = input('Clear the raw_data dir? (y/n)')
+        if prompt == 'y':
+            clean_directory()
+
+        retrieve()
+        clean_database()
+
+        from process_data import process
+
+        process()
+
+        verify()
+
+    print('Finished.')

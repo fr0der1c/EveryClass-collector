@@ -1,10 +1,7 @@
 """
-del_wrong_semester.py
-Created: 2017-10-16 by Frederic
-Description:
 学生毕业以后，下学期前几次导入课表可能仍然在stu_data.json中，使用process_data.py导入之后这些学生就被存入ec_students表中了。
 而下次导入前会清空学期表，而他们已经不在学期表中了，但ec_students表中仍然存在他们错误的学期，所以访问会出错。解决办法：导入后手
-动使用 del_wrong_semester.py 清除ec_students表中错误的学期信息。
+动使用 verify_semester.py 清除ec_students表中错误的学期信息。
 """
 import mysql.connector
 import settings

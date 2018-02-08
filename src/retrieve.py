@@ -3,6 +3,7 @@
 import requests
 import json
 import settings
+import random
 import time
 from termcolor import cprint
 from threading import Thread
@@ -11,8 +12,7 @@ from queue import Queue
 url = 'http://csujwc.its.csu.edu.cn/jiaowu/pkgl/llsykb/llsykb_kb.jsp'
 num_worker_threads = 30
 header_info = {
-    "User-Agent": settings.USER_AGENT,
-    "Referer": "http://csujwc.its.csu.edu.cn/jiaowu/pkgl/llsykb/llsykb_find_xs0101.jsp?xnxq01id=2016-2017-2&init=1&isview=0",
+    "Referer": "http://csujwc.its.csu.edu.cn/jiaowu/pkgl/llsykb/llsykb_find_xs0101.jsp?xnxq01id=2017-2018-2&init=1&isview=0",
     'Host': 'csujwc.its.csu.edu.cn',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Encoding': 'gzip, deflate',
@@ -34,6 +34,8 @@ class SpiderThread(Thread):
 
     def run(self):
         def download(data):
+            header = header_info
+            header['User-Agent'] = random.choice(settings.User_Agent)
             req1 = s.post(url, headers=header_info, data=data)
             local_filename = 'raw_data/' + data['xs0101id'] + '.html'
             with open(local_filename, 'wb') as f:
@@ -72,8 +74,10 @@ def retrieve():
     # Add task to queue
     for i in stu_data:
         count += 1
-        if count < 25840:
+
+        if count < 0:
             continue
+
         queue.put({'xs0101id': i['xs0101id'],
                    'xs': i['xm']})
     cprint('Task scheduling finished.', color='green')
