@@ -7,7 +7,7 @@ SEMESTER = "2017-2018-2"
 with open("stu_data_version.json") as f:
     JSON_FILE = json.load(f)["stu_data_json_name"]
 DEBUG = False
-DEBUG_LEVEL = 0  # 5 means the most verbose
+DEBUG_LEVEL = 2  # 5 means the most verbose
 
 # MySQL Config
 MYSQL_CONFIG = {

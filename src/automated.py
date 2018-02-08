@@ -7,6 +7,7 @@ from predefined import get_semester_code_for_db
 from retrieve import retrieve
 from verify_semester import verify
 from stu_data_json_compare import compare_json
+from termcolor import cprint
 
 
 def fix_json(old_json_filename):
@@ -118,13 +119,14 @@ if __name__ == "__main__":
         if prompt == 'y':
             clean_directory()
 
-        retrieve()
-        clean_database()
+        # retrieve()
 
         from process_data import process
 
         process()
 
         verify()
+
+        cprint('Please add the semester in everyclass-server to let the new semester becomes legal')
 
     print('Finished.')

@@ -44,8 +44,8 @@ def _append_student_to_class(existing_students, this_student, class_id, cursor, 
         cursor.execute(query, (json.dumps(existing_students), class_id))
         conn.commit()
 
-        if settings.DEBUG_LEVEL >= 3:
-            cprint('[APPEND STUDENT]', end='', color='blue', attrs=['bold'])
+        if settings.DEBUG_LEVEL >= 2:
+            cprint('[APPEND STUDENT]', color='blue', attrs=['bold'])
 
         count_lock.acquire()
         APPEND_TO_COURSE_COUNT = APPEND_TO_COURSE_COUNT + 1
@@ -56,8 +56,8 @@ def _append_student_to_class(existing_students, this_student, class_id, cursor, 
 def _add_new_course(course_name, class_time, row_number, teacher, duration, week, location, md5_value, xh, cursor,
                     conn):
     global ADD_NEW_COURSE_COUNT
-    if settings.DEBUG_LEVEL >= 3:
-        cprint('[ADD CLASS]', end='', color="green", attrs=['bold'])
+    if settings.DEBUG_LEVEL >= 2:
+        cprint('[ADD CLASS]', color="green", attrs=['bold'])
     query = "INSERT INTO ec_classes_" + get_semester_code_for_db(xq) + \
             "(clsname, day, time, teacher, duration, week, location, students, id) " \
             "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) "
@@ -111,6 +111,7 @@ class ProcessThread(Thread):
                 query = "INSERT INTO ec_students (xh, semesters, xs0101id, name) VALUES (%s, %s, %s, %s)"
                 cursor.execute(query, (stu['xh'], json.dumps([settings.SEMESTER, ]), stu['xs0101id'], stu['xm']))
                 conn.commit()
+                cprint('[ec_students] add new student [%s]%s' % (stu['xh'], stu['xm']))
                 db_lock.release()
 
                 count_lock.acquire()
@@ -119,8 +120,6 @@ class ProcessThread(Thread):
 
             else:
                 # 老生检查学期是否在个人记录中已经存在，若不存在则加入
-                if settings.DEBUG_LEVEL >= 2:
-                    print('Existing student: [%s]%s' % (stu['xh'], stu['xm']))
                 semesters = json.loads(fetch_result[0][1])
                 if settings.SEMESTER not in semesters:
                     # 当前学期不在数据库中则加入(不判断的话可能重复加入)
@@ -135,13 +134,14 @@ class ProcessThread(Thread):
                     count_lock.acquire()
                     TABLE1_COUNT_UPDATE = TABLE1_COUNT_UPDATE + 1
                     count_lock.release()
-                    print("Add semester to student [%s]%s 's record" % (stu['xh'], stu['xm']))
+                    cprint("[ec_students] Add semester to student [%s]%s 's record" % (stu['xh'], stu['xm']))
                 else:
                     count_lock.acquire()
                     TABLE1_COUNT_PASS = TABLE1_COUNT_PASS + 1
                     count_lock.release()
+                    cprint("[ec_students] Semester already in student [%s]%s 's record" % (stu['xh'], stu['xm']))
 
-            # ec_students 学期表中寻找学生
+            # 学期表中寻找学生
             db_lock.acquire()
             query = 'SELECT * FROM ec_students_' + get_semester_code_for_db(xq) + ' WHERE xh=%s'
             cursor.execute(query, (stu['xh'],))
@@ -151,7 +151,7 @@ class ProcessThread(Thread):
             # 在数据库中找不到学生，则增加学生
             if not result:
                 if settings.DEBUG_LEVEL >= 2:
-                    print('[Add student to ec_students_%s]' % get_semester_code_for_db(xq))
+                    print('Add student [%s]%s to ec_students_%s' % (stu['xh'],stu['xm'],get_semester_code_for_db(xq)))
                 for class_time in range(1, 8):
                     for row_number in range(1, 7):
                         query_selector = 'div[id="' + get_row_code(xq, row_number) + '-' + str(
@@ -234,8 +234,8 @@ class ProcessThread(Thread):
 
             # 如果学期表中已经存在数据就跳过（学期表只能从零开始，不能更新）
             else:
-                print('[PASS] student [%s]%s already exists in %s'
-                      % (stu['xh'], stu['xm'], "ec_students_" + get_semester_code_for_db(xq)))
+                cprint('[%s] student [%s]%s already exists, pass. This is unexpected behaviour!'
+                       % ("ec_students_" + get_semester_code_for_db(xq), stu['xh'], stu['xm']), color='red')
 
                 count_lock.acquire()
                 TABLE2_COUNT_PASS = TABLE2_COUNT_PASS + 1
