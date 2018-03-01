@@ -151,7 +151,7 @@ class ProcessThread(Thread):
             # 在数据库中找不到学生，则增加学生
             if not result:
                 if settings.DEBUG_LEVEL >= 2:
-                    print('Add student [%s]%s to ec_students_%s' % (stu['xh'],stu['xm'],get_semester_code_for_db(xq)))
+                    print('[ec_students_%s] Add student [%s]%s' % (get_semester_code_for_db(xq), stu['xh'], stu['xm']))
                 for class_time in range(1, 8):
                     for row_number in range(1, 7):
                         query_selector = 'div[id="' + get_row_code(xq, row_number) + '-' + str(
