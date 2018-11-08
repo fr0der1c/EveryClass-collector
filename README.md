@@ -1,5 +1,10 @@
-## EveryClass 数据收集模块
-EveryClass：Data-collecting part
+## Data-collecting module of EveryClass 
+
+
+**Notice**: This repo is deprecated. The new generation of spider is in development and it's planned not to be open-sourced.
+
+
+-----------
 
 这是 EveryClass 的数据收集和处理模块。为了结构的清晰性，我们把本项目的不同模块分成了单独的仓库。查看 [项目主页](https://github.com/fr0der1c/EveryClass) 了解详情。
 
